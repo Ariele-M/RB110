@@ -7,7 +7,7 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
 
 # rubocop:disable Metrics/AbcSize
 def display_board(brd)
-  system "clear"
+  #system "clear"
 
   puts "You're a #{PLAYER_MARKER}. Computer is #{COMPUTER_MARKER}."
   puts ""
@@ -52,7 +52,16 @@ def player_places_piece!(brd)
 end
 
 def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
+  square = nil
+  WINNING_LINES.each do |line|
+    square = find_at_risk_square(line, brd)
+    break if square
+  end
+
+  if !square
+    square = empty_squares(brd).sample
+  end
+
   brd[square] = COMPUTER_MARKER
 end
 
@@ -90,6 +99,14 @@ def initialize_score
   { player_score: 0, computer_score: 0 }
 end
 
+def find_at_risk_square(line, board)
+  if board.values_at(*line).count(PLAYER_MARKER) == 2
+    board.select{|k,v| line.include?(k) && v == INITIAL_MARKER }.keys.first
+  else
+    nil
+  end
+end
+
 loop do
   score = initialize_score
   answer = ''
@@ -124,7 +141,9 @@ loop do
       break unless answer.downcase.start_with?('y')
     end
   end
-  break unless answer.downcase.start_with?('y') # issue with break when picking no
+  break unless answer.downcase.start_with?('y') # issue with break when picking no #2 come back to it
 end
 
 prompt "Thanks for playing Tic Tac Toe. Goodbye!"
+
+
