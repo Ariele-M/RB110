@@ -18,9 +18,3 @@ wins. If all 9 squares are marked and no player has 3 squares in a row, then the
 ---
 
 Bonus
-
-#3. Computer AI Defense
-
-Iterate through winning lines arrays. find subarray with 2 Xs and 1 ' '. return the empty square number
-
-if no matching iterations, return nil

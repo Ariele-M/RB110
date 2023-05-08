@@ -7,7 +7,7 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
 
 # rubocop:disable Metrics/AbcSize
 def display_board(brd)
-  #system "clear"
+  system "clear"
 
   puts "You're a #{PLAYER_MARKER}. Computer is #{COMPUTER_MARKER}."
   puts ""
@@ -53,11 +53,29 @@ end
 
 def computer_places_piece!(brd)
   square = nil
+
+  # offense first
   WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, brd)
+    square = find_at_risk_square(line, brd, COMPUTER_MARKER)
     break if square
   end
 
+  # defense
+  if !square
+    WINNING_LINES.each do |line|
+      square = find_at_risk_square(line, brd, PLAYER_MARKER)
+      break if square
+    end
+  end
+
+   # pick square 5
+   if !square
+    if empty_squares(brd).include?(5)
+      square = 5
+    end
+  end
+
+  # just pick a square
   if !square
     square = empty_squares(brd).sample
   end
@@ -99,9 +117,9 @@ def initialize_score
   { player_score: 0, computer_score: 0 }
 end
 
-def find_at_risk_square(line, board)
-  if board.values_at(*line).count(PLAYER_MARKER) == 2
-    board.select{|k,v| line.include?(k) && v == INITIAL_MARKER }.keys.first
+def find_at_risk_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    board.select{|k,v| line.include?(k) && v == INITIAL_MARKER}.keys.first
   else
     nil
   end
@@ -141,7 +159,7 @@ loop do
       break unless answer.downcase.start_with?('y')
     end
   end
-  break unless answer.downcase.start_with?('y') # issue with break when picking no #2 come back to it
+  break unless answer.downcase.start_with?('y')
 end
 
 prompt "Thanks for playing Tic Tac Toe. Goodbye!"
